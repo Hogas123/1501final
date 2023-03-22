@@ -49,3 +49,5 @@ shape = SubResource( 1 )
 
 [connection signal="area_entered" from="StatsPan/statsPanArea" to="." method="_on_statsPanArea_area_entered"]
 [connection signal="area_exited" from="StatsPan/statsPanArea" to="." method="_on_statsPanArea_area_exited"]
+[connection signal="body_entered" from="StatsPan/statsPanArea" to="." method="_on_statsPanArea_body_entered"]
+[connection signal="body_exited" from="StatsPan/statsPanArea" to="." method="_on_statsPanArea_body_exited"]

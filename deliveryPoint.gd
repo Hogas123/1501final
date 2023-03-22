@@ -5,7 +5,6 @@ var id = "delivery point"
 var valid = true
 
 signal scoreSignal
-signal reposition
 
 
 # Called when the node enters the scene tree for the first time.
