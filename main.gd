@@ -19,6 +19,7 @@ var timeLbl
 var scoreLbl 
 var deliveryPoint
 var player
+var playspace
 
 #Instanced secne Preloads
 var deliveryPointScene
@@ -36,17 +37,12 @@ func _ready():
 	screenSize = get_viewport().get_visible_rect().size
 	n_xPos = floor(screenSize.x / dPointSize)
 	n_yPos = floor(screenSize.y / dPointSize)
-	
-	#fill map empty
-	for y in range(n_yPos):
-		map.append([])
-		for x in range(n_xPos):
-			map[y].append("e")
 			
 	randomize()
 	
 	#get Godot Nodes
 	root = get_node(".")
+	playspace = get_node("playspace")
 	timeLbl = get_node("StatsPan/TimeStat")
 	scoreLbl = get_node("StatsPan/ScoreStat")
 	player = get_node("PlayerBody")
@@ -55,11 +51,8 @@ func _ready():
 	deliveryPointScene = load("res://deliveryPoint.tscn")
 	statObstacleScene = load("res://statObstacle.tscn")
 	endScreenScene = load("res://endScreen.tscn")
-	
-	#load and place first delivery point
-	deliveryPoint = deliveryPointScene.instance()
-	root.add_child(deliveryPoint)
-	deliveryPoint.position = randPointPlacer("d")
+	start_game()
+
 	
 	
 
@@ -73,6 +66,28 @@ func _process(delta):
 		timeLbl.text = "Time: " + str(timer)
 	scoreLbl.text = "Score: " + str(score)
 	
+func start_game():
+	#fill map empty
+	for y in range(n_yPos):
+		map.append([])
+		for x in range(n_xPos):
+			map[y].append("e")
+	
+	#load and place first delivery point
+	deliveryPoint = deliveryPointScene.instance()
+	playspace.add_child(deliveryPoint)
+	deliveryPoint.position = randPointPlacer("d")
+	
+func reset_game():
+	$endScreen.queue_free()
+	for x in playspace.get_children():
+		x.queue_free()
+	
+	timer = 0
+	score = 0
+	player.position = Vector2(477,568)
+	
+	start_game()
 
 #Generates a random Point placement unoccupied point on the map
 func randPointPlacer(type):
@@ -100,12 +115,12 @@ func score_increase():
 	
 	#creates and maps new delivery point
 	deliveryPoint = deliveryPointScene.instance()
-	root.add_child(deliveryPoint)
+	playspace.add_child(deliveryPoint)
 	deliveryPoint.position = randPointPlacer("d")
 	
 	#creates and maps new obstacle
 	var inst = statObstacleScene.instance()
-	root.add_child(inst)
+	playspace.add_child(inst)
 	inst.position = randPointPlacer("o")
 	
 #shows end screen

@@ -47,6 +47,8 @@ script = ExtResource( 3 )
 position = Vector2( 142.5, 39.5 )
 shape = SubResource( 1 )
 
+[node name="playspace" type="Node2D" parent="."]
+
 [connection signal="area_entered" from="StatsPan/statsPanArea" to="." method="_on_statsPanArea_area_entered"]
 [connection signal="area_exited" from="StatsPan/statsPanArea" to="." method="_on_statsPanArea_area_exited"]
 [connection signal="body_entered" from="StatsPan/statsPanArea" to="." method="_on_statsPanArea_body_entered"]
