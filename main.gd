@@ -9,10 +9,12 @@ var dPointSize = 40
 var n_xPos: int 
 var n_yPos: int 
 var map = []
+var garbage = []
 
 #game vars
 var score = 0
 var timer = 0
+var ammo = 5
 
 #Godot node variables
 var root
@@ -28,6 +30,7 @@ var deliveryPointScene
 var statObstacleScene
 var endScreenScene
 var shotScene
+var playerScene
 
 
 
@@ -55,6 +58,7 @@ func _ready():
 	deliveryPointScene = load("res://deliveryPoint.tscn")
 	statObstacleScene = load("res://statObstacle.tscn")
 	endScreenScene = load("res://endScreen.tscn")
+	playerScene = load("res://PlayerBody.tscn")
 	shotScene = load("res://PlayerShot.tscn")
 	start_game()
 
@@ -70,16 +74,18 @@ func _process(delta):
 		timer += 0.1
 		timeLbl.text = "Time: " + str(timer)
 	scoreLbl.text = "Score: " + str(score)
-	ammoLbl.text = "Ammo: " + str(player.ammo)
+	ammoLbl.text = "Ammo: " + str(ammo)
+	
 	
 	var shooting = false
 	
-	if Input.is_action_just_pressed("playerShoot") and player.ammo > 0:
+	if Input.is_action_just_pressed("playerShoot") and ammo > 0:
 		var inst = shotScene.instance()
 		playspace.add_child(inst)
-		player.ammo -= 1
-		
-		
+		ammo -= 1
+	
+	if Input.is_action_just_pressed("map"):
+		print(map)
 	
 func start_game():
 	#fill map empty
@@ -91,7 +97,9 @@ func start_game():
 	#load and place first delivery point
 	deliveryPoint = deliveryPointScene.instance()
 	playspace.add_child(deliveryPoint)
-	deliveryPoint.position = randPointPlacer("d")
+	var newDPos = randPointPlacer("d")
+	deliveryPoint.position.x = newDPos.x * dPointSize
+	deliveryPoint.position.y = newDPos.y * dPointSize
 	
 func reset_game():
 	$endScreen.queue_free()
@@ -100,8 +108,9 @@ func reset_game():
 	
 	timer = 0
 	score = 0
-	player.position = Vector2(477,568)
-	
+	ammo = 5
+	player = playerScene.instance()
+	add_child(player)
 	start_game()
 
 #Generates a random Point placement unoccupied point on the map
@@ -109,13 +118,14 @@ func randPointPlacer(type):
 	#adjusted range keeps things out from behind ui and on screen
 	var rand_xPos = randi() % (n_xPos-2) +1
 	var rand_yPos = randi() % (n_yPos - 5) +3
-
+	
+	
 	if map[rand_yPos][rand_xPos] == "e":
 		map[rand_yPos][rand_xPos] = type
 	else:
 		#function reccurs until an empty space is chosen
 		return randPointPlacer(type)
-	return Vector2(rand_xPos * dPointSize, rand_yPos * dPointSize)
+	return Vector2(rand_xPos , rand_yPos)
 	
 		
 		
@@ -131,17 +141,24 @@ func score_increase():
 	#creates and maps new delivery point
 	deliveryPoint = deliveryPointScene.instance()
 	playspace.add_child(deliveryPoint)
-	deliveryPoint.position = randPointPlacer("d")
+	var newDPos = randPointPlacer("d")
+	deliveryPoint.position.x = newDPos.x * dPointSize
+	deliveryPoint.position.y = newDPos.y * dPointSize
 	
 	#creates and maps new obstacle
 	var inst = statObstacleScene.instance()
+	inst.mapPos = randPointPlacer("o")
 	playspace.add_child(inst)
-	inst.position = randPointPlacer("o")
 	
 #shows end screen
 func death():
 	var inst = endScreenScene.instance()
 	root.add_child(inst)
+	
+func 	shot_hit(body, pos):
+	
+	map[pos.y][pos.x] = "e"
+	body.queue_free()
 	
 #prevents entering ui
 func _on_statsPanArea_body_entered(body):
@@ -150,3 +167,8 @@ func _on_statsPanArea_body_entered(body):
 #returns movement once away from ui
 func _on_statsPanArea_body_exited(body):
 	player.motionReset()
+
+#destroys off screen items to help performance
+func _on_playspace_body_exited(body):
+	body.queue_free()
+	pass # Replace with function body.

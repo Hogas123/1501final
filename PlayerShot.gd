@@ -1,9 +1,10 @@
 extends KinematicBody2D
 
+var id = "shot"
+# Shot vars
+var direction
+var speed = 20
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
 
 #sibling node vars
 var player
@@ -21,17 +22,30 @@ func _ready():
 	if player.pointing == "up":
 		spr.set_frame(0)
 		position = Vector2(player.position.x, player.position.y - 35)
+		direction = "up"
 	if player.pointing == "left":
 		spr.set_frame(1)
 		position = Vector2(player.position.x - 35, player.position.y)
+		direction = "left"
 	if player.pointing == "right":
 		spr.set_frame(2)
 		position = Vector2(player.position.x + 35, player.position.y)
+		direction = "right"
 	if player.pointing == "down":
 		spr.set_frame(3)
 		position = Vector2(player.position.x, player.position.y + 35)
+		direction = "down"
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func _process(delta):
+	if direction == "up":
+		position.y -= 20*speed*delta
+	if direction == "left":
+		position.x -= 20*speed*delta
+	if direction == "right":
+		position.x += 20*speed*delta
+	if direction == "down":
+		position.y += 20*speed*delta
+
+

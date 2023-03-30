@@ -18,5 +18,8 @@ func _ready():
 #	pass
 
 func _on_deliveryPoint_body_entered(body):
-	emit_signal("scoreSignal")
-	queue_free()
+	if body.id == "player":
+		emit_signal("scoreSignal")
+		queue_free()
+	else:
+		body.queue_free()

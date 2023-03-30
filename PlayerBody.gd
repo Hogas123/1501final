@@ -4,7 +4,6 @@ var id = "player"
 
 var speed = 15
 var pointing
-var ammo
 
 var canLeft = true
 var canRight = true
@@ -22,7 +21,7 @@ func _ready():
 	#get nodes
 	spr = get_node("Sprite")
 	pointing = "up"
-	ammo = 5
+	position = Vector2(500,550)
 	
 	
 

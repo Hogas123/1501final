@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://main.gd" type="Script" id=1]
 [ext_resource path="res://PlayerBody.tscn" type="PackedScene" id=2]
@@ -6,6 +6,9 @@
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 170.5, 48.5 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 512, 300 )
 
 [node name="main" type="Node2D"]
 script = ExtResource( 1 )
@@ -54,9 +57,14 @@ script = ExtResource( 3 )
 position = Vector2( 142.5, 39.5 )
 shape = SubResource( 1 )
 
-[node name="playspace" type="Node2D" parent="."]
+[node name="playspace" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="playspace"]
+position = Vector2( 512, 299 )
+shape = SubResource( 2 )
 
 [connection signal="area_entered" from="StatsPan/statsPanArea" to="." method="_on_statsPanArea_area_entered"]
 [connection signal="area_exited" from="StatsPan/statsPanArea" to="." method="_on_statsPanArea_area_exited"]
 [connection signal="body_entered" from="StatsPan/statsPanArea" to="." method="_on_statsPanArea_body_entered"]
 [connection signal="body_exited" from="StatsPan/statsPanArea" to="." method="_on_statsPanArea_body_exited"]
+[connection signal="body_exited" from="playspace" to="." method="_on_playspace_body_exited"]
