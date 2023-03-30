@@ -40,6 +40,13 @@ margin_right = 243.0
 margin_bottom = 51.0
 text = "Score:"
 
+[node name="AmmoCount" type="Label" parent="StatsPan"]
+margin_left = 128.0
+margin_top = 10.0
+margin_right = 243.0
+margin_bottom = 30.0
+text = "Ammo:"
+
 [node name="statsPanArea" type="Area2D" parent="StatsPan"]
 script = ExtResource( 3 )
 

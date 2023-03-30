@@ -18,6 +18,7 @@ var timer = 0
 var root
 var timeLbl
 var scoreLbl 
+var ammoLbl
 var deliveryPoint
 var player
 var playspace
@@ -26,6 +27,7 @@ var playspace
 var deliveryPointScene
 var statObstacleScene
 var endScreenScene
+var shotScene
 
 
 
@@ -46,12 +48,14 @@ func _ready():
 	playspace = get_node("playspace")
 	timeLbl = get_node("StatsPan/TimeStat")
 	scoreLbl = get_node("StatsPan/ScoreStat")
+	ammoLbl = get_node("StatsPan/AmmoCount")
 	player = get_node("PlayerBody")
 	
 	#preload scene instances
 	deliveryPointScene = load("res://deliveryPoint.tscn")
 	statObstacleScene = load("res://statObstacle.tscn")
 	endScreenScene = load("res://endScreen.tscn")
+	shotScene = load("res://PlayerShot.tscn")
 	start_game()
 
 	
@@ -66,6 +70,16 @@ func _process(delta):
 		timer += 0.1
 		timeLbl.text = "Time: " + str(timer)
 	scoreLbl.text = "Score: " + str(score)
+	ammoLbl.text = "Ammo: " + str(player.ammo)
+	
+	var shooting = false
+	
+	if Input.is_action_just_pressed("playerShoot") and player.ammo > 0:
+		var inst = shotScene.instance()
+		playspace.add_child(inst)
+		player.ammo -= 1
+		
+		
 	
 func start_game():
 	#fill map empty
