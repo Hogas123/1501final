@@ -28,9 +28,11 @@ var playspace
 #Instanced secne Preloads
 var deliveryPointScene
 var statObstacleScene
+var emitterObstacleScene
 var endScreenScene
 var shotScene
 var playerScene
+var projectileScene
 
 
 
@@ -57,9 +59,11 @@ func _ready():
 	#preload scene instances
 	deliveryPointScene = load("res://deliveryPoint.tscn")
 	statObstacleScene = load("res://statObstacle.tscn")
+	emitterObstacleScene = load ("res://ProjectileEmitter.tscn")
 	endScreenScene = load("res://endScreen.tscn")
 	playerScene = load("res://PlayerBody.tscn")
 	shotScene = load("res://PlayerShot.tscn")
+	projectileScene = load("res://Projectile.tscn")
 	start_game()
 
 	
@@ -146,9 +150,14 @@ func score_increase():
 	deliveryPoint.position.y = newDPos.y * dPointSize
 	
 	#creates and maps new obstacle
-	var inst = statObstacleScene.instance()
-	inst.mapPos = randPointPlacer("o")
-	playspace.add_child(inst)
+	if(score % 3 == 0):
+		var inst = emitterObstacleScene.instance()
+		inst.mapPos = randPointPlacer("o_e")
+		playspace.add_child(inst)
+	else:
+		var inst = statObstacleScene.instance()
+		inst.mapPos = randPointPlacer("o_s")
+		playspace.add_child(inst)
 	
 #shows end screen
 func death():
@@ -160,6 +169,33 @@ func 	shot_hit(body, pos):
 	map[pos.y][pos.x] = "e"
 	body.queue_free()
 	
+func emit_proj(direction, pos):
+	var inst = projectileScene.instance()
+	
+	if direction == "up":
+		inst.direction = "up"
+		inst.position.x = pos.x
+		inst.position.y = pos.y - 35
+	elif direction == "left":
+		inst.direction = "left"
+		inst.position.x = pos.x - 35
+		inst.position.y = pos.y
+	elif direction == "right":
+		inst.direction = "right"
+		inst.position.x = pos.x + 35
+		inst.position.y = pos.y 
+	elif direction == "direction":
+		inst.direction = "down"
+		inst.position.x = pos.x
+		inst.position.y = pos.y + 35
+	
+	playspace.add_child(inst)
+	
+func proj_hit(body):
+	print("struck")
+	if body.id == "player":
+		death()
+		
 #prevents entering ui
 func _on_statsPanArea_body_entered(body):
 	player.collisionDirection()
