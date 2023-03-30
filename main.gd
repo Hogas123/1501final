@@ -150,7 +150,12 @@ func score_increase():
 	deliveryPoint.position.y = newDPos.y * dPointSize
 	
 	#creates and maps new obstacle
-	if(score % 3 == 0):
+	if(score % 7 == 0):
+		var inst = emitterObstacleScene.instance()
+		inst.mapPos = randPointPlacer("o_e")
+		inst.multi = true
+		playspace.add_child(inst)
+	elif(score % 3 == 0):
 		var inst = emitterObstacleScene.instance()
 		inst.mapPos = randPointPlacer("o_e")
 		playspace.add_child(inst)
@@ -172,25 +177,45 @@ func 	shot_hit(body, pos):
 func emit_proj(direction, pos):
 	var inst = projectileScene.instance()
 	
-	if direction == "up":
+	if direction != "multi":
+		if direction == "up":
+			inst.direction = "up"
+			inst.position.x = pos.x
+			inst.position.y = pos.y - 35
+		elif direction == "left":
+			inst.direction = "left"
+			inst.position.x = pos.x - 35
+			inst.position.y = pos.y
+		elif direction == "right":
+			inst.direction = "right"
+			inst.position.x = pos.x + 35
+			inst.position.y = pos.y 
+		elif direction == "down":
+			inst.direction = "down"
+			inst.position.x = pos.x
+			inst.position.y = pos.y + 35
+		playspace.add_child(inst)
+	else:
 		inst.direction = "up"
 		inst.position.x = pos.x
 		inst.position.y = pos.y - 35
-	elif direction == "left":
+		playspace.add_child(inst)
+		inst = projectileScene.instance()
 		inst.direction = "left"
 		inst.position.x = pos.x - 35
 		inst.position.y = pos.y
-	elif direction == "right":
+		playspace.add_child(inst)
+		inst = projectileScene.instance()
 		inst.direction = "right"
 		inst.position.x = pos.x + 35
 		inst.position.y = pos.y 
-	elif direction == "down":
+		playspace.add_child(inst)
+		inst = projectileScene.instance()
 		inst.direction = "down"
 		inst.position.x = pos.x
 		inst.position.y = pos.y + 35
-	
-	playspace.add_child(inst)
-	
+		playspace.add_child(inst)
+		
 func proj_hit(body):
 	print("struck")
 	if body.id == "player":

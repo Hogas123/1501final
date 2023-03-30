@@ -4,6 +4,7 @@ extends Area2D
 var id = "projectile emitter"
 
 var direction
+var multi = false
 var mapPos = Vector2(0,0)
 var dPointSize = 40
 #node vars
@@ -26,22 +27,24 @@ func _ready():
 	spr = get_node("Sprite")
 	exTimer = get_node("exTimer")
 	position = Vector2( mapPos.x * dPointSize, mapPos.y * dPointSize)
-	var getDir = findDirection()
+	if ! multi:
+		var getDir = findDirection()
 	
-	if getDir == 0:
-		direction = "up"
-		spr.set_frame(0)
-	elif getDir == 1:
-		direction = "left"
-		spr.set_frame(1)
-	elif getDir == 2:
-		direction = "right"
-		spr.set_frame(2)
-	elif getDir == 3:
-		direction = "down"
-		spr.set_frame(3)
-	
-	direction = "down"
+		if getDir == 0:
+			direction = "up"
+			spr.set_frame(0)
+		elif getDir == 1:
+			direction = "left"
+			spr.set_frame(1)
+		elif getDir == 2:
+			direction = "right"
+			spr.set_frame(2)
+		elif getDir == 3:
+			direction = "down"
+			spr.set_frame(3)
+	else:
+		direction = "multi"
+		spr.set_frame(4)
 	#connect signals
 	connect("p_hitSignal",get_tree().get_root().get_node("main") ,"death")
 	connect("s_hitSignal",get_tree().get_root().get_node("main") ,"shot_hit")
@@ -71,7 +74,7 @@ func _on_ProjectileEmitter_body_entered(body):
 	if body.id == "player":
 		emit_signal("p_hitSignal")
 	elif body.id == "shot":
-		spr.set_frame(4)
+		spr.set_frame(5)
 		emit_signal("s_hitSignal", body, mapPos)
 		exTimer.start()
 
