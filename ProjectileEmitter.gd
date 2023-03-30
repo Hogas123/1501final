@@ -25,7 +25,8 @@ func _ready():
 	#get nodes
 	spr = get_node("Sprite")
 	exTimer = get_node("exTimer")
-	var getDir = randi() % 4
+	position = Vector2( mapPos.x * dPointSize, mapPos.y * dPointSize)
+	var getDir = findDirection()
 	
 	if getDir == 0:
 		direction = "up"
@@ -39,13 +40,28 @@ func _ready():
 	elif getDir == 3:
 		direction = "down"
 		spr.set_frame(3)
+	
+	direction = "down"
 	#connect signals
 	connect("p_hitSignal",get_tree().get_root().get_node("main") ,"death")
 	connect("s_hitSignal",get_tree().get_root().get_node("main") ,"shot_hit")
 	connect("emit_projSignal",get_tree().get_root().get_node("main") ,"emit_proj")
 	
-	position = Vector2( mapPos.x * dPointSize, mapPos.y * dPointSize)
-
+	
+func findDirection():
+	var screenSize = get_viewport().get_visible_rect().size
+	var directions = []
+	if position.x > 150:
+		directions.push_front(1)
+	if position.y > 150:
+		directions.push_front(0)
+	if position.x < screenSize.x - 150:
+		directions.push_front(2)
+	if position.y < screenSize.y - 150:
+		directions.push_front(3)
+	var randC = randi() % directions.size()
+	var dir = directions[randC]
+	return dir
 		
 func _on_exTimer_timeout():
 	queue_free()

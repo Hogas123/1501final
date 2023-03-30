@@ -184,7 +184,7 @@ func emit_proj(direction, pos):
 		inst.direction = "right"
 		inst.position.x = pos.x + 35
 		inst.position.y = pos.y 
-	elif direction == "direction":
+	elif direction == "down":
 		inst.direction = "down"
 		inst.position.x = pos.x
 		inst.position.y = pos.y + 35
