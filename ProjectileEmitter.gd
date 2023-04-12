@@ -46,7 +46,7 @@ func _ready():
 		direction = "multi"
 		spr.set_frame(4)
 	#connect signals
-	connect("p_hitSignal",get_tree().get_root().get_node("main") ,"death")
+	connect("p_hitSignal",get_tree().get_root().get_node("main") ,"goToTimelines")
 	connect("s_hitSignal",get_tree().get_root().get_node("main") ,"shot_hit")
 	connect("emit_projSignal",get_tree().get_root().get_node("main") ,"emit_proj")
 	

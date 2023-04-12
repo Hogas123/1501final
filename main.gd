@@ -14,7 +14,9 @@ var garbage = []
 #game vars
 var score = 0
 var timer = 0
-var ammo = 5
+var ammo = 30
+var lines = 0
+var playtime = 0
 
 #Godot node variables
 var root
@@ -29,6 +31,7 @@ var playspace
 var deliveryPointScene
 var statObstacleScene
 var emitterObstacleScene
+var timelinesScreenScene
 var endScreenScene
 var shotScene
 var playerScene
@@ -54,17 +57,18 @@ func _ready():
 	timeLbl = get_node("StatsPan/TimeStat")
 	scoreLbl = get_node("StatsPan/ScoreStat")
 	ammoLbl = get_node("StatsPan/AmmoCount")
-	player = get_node("PlayerBody")
+	
 	
 	#preload scene instances
 	deliveryPointScene = load("res://deliveryPoint.tscn")
 	statObstacleScene = load("res://statObstacle.tscn")
 	emitterObstacleScene = load ("res://ProjectileEmitter.tscn")
-	endScreenScene = load("res://endScreen.tscn")
+	timelinesScreenScene = load("res://TimelinesScreen.tscn")
 	playerScene = load("res://PlayerBody.tscn")
 	shotScene = load("res://PlayerShot.tscn")
 	projectileScene = load("res://Projectile.tscn")
-	start_game()
+	endScreenScene = load("res://gameOverScreen.tscn")
+	start_playspace()
 
 	
 	
@@ -91,13 +95,16 @@ func _process(delta):
 	if Input.is_action_just_pressed("map"):
 		print(map)
 	
-func start_game():
+func start_playspace():
 	#fill map empty
 	for y in range(n_yPos):
 		map.append([])
 		for x in range(n_xPos):
 			map[y].append("e")
 	
+	
+	player = playerScene.instance()
+	playspace.add_child(player)
 	#load and place first delivery point
 	deliveryPoint = deliveryPointScene.instance()
 	playspace.add_child(deliveryPoint)
@@ -105,18 +112,50 @@ func start_game():
 	deliveryPoint.position.x = newDPos.x * dPointSize
 	deliveryPoint.position.y = newDPos.y * dPointSize
 	
-func reset_game():
-	$endScreen.queue_free()
+func reset_playspace():
 	for x in playspace.get_children():
+		print(x)
 		x.queue_free()
 	
-	timer = 0
-	score = 0
-	ammo = 5
-	player = playerScene.instance()
-	add_child(player)
-	start_game()
+	ammo = 7
+	start_playspace()
 
+func randomize_playspace():
+	reset_playspace()
+	var num_obs
+	#provides maximum number of objects in a new timeline 
+	if score > 20:
+		num_obs = 20
+	else:
+		num_obs = score
+	for x in num_obs:
+		#creates and maps new obstacle
+		var type_it = x+1
+		if(type_it % 7 == 0):
+			var inst = emitterObstacleScene.instance()
+			inst.mapPos = randPointPlacer("o_e")
+			inst.multi = true
+			playspace.add_child(inst)
+		elif(type_it % 3 == 0):
+			var inst = emitterObstacleScene.instance()
+			inst.mapPos = randPointPlacer("o_e")
+			playspace.add_child(inst)
+		else:
+			var inst = statObstacleScene.instance()
+			inst.mapPos = randPointPlacer("o_s")
+			playspace.add_child(inst)
+	
+
+func goToTimelines():
+	lines += 1
+	var inst = timelinesScreenScene.instance()
+	add_child(inst)
+	get_tree().paused =  true
+	
+func gameOver():
+	var inst = endScreenScene.instance()
+	add_child(inst)
+	
 #Generates a random Point placement unoccupied point on the map
 func randPointPlacer(type):
 	#adjusted range keeps things out from behind ui and on screen
@@ -164,12 +203,7 @@ func score_increase():
 		inst.mapPos = randPointPlacer("o_s")
 		playspace.add_child(inst)
 	
-#shows end screen
-func death():
-	var inst = endScreenScene.instance()
-	root.add_child(inst)
-	
-func 	shot_hit(body, pos):
+func shot_hit(body, pos):
 	
 	map[pos.y][pos.x] = "e"
 	body.queue_free()
@@ -219,7 +253,7 @@ func emit_proj(direction, pos):
 func proj_hit(body):
 	print("struck")
 	if body.id == "player":
-		death()
+		goToTimelines()
 		
 #prevents entering ui
 func _on_statsPanArea_body_entered(body):

@@ -13,6 +13,7 @@ var colliding = false
 
 #node vars
 var spr
+var playspace
 
 
 
@@ -22,6 +23,8 @@ func _ready():
 	spr = get_node("Sprite")
 	pointing = "up"
 	position = Vector2(500,550)
+	playspace = get_parent()
+	playspace.playerDir = "up"
 	
 	
 
@@ -51,21 +54,29 @@ func _process(delta):
 		spr.set_frame(3) 
 		position.x+=20*speed*delta
 		pointing = "right"
+		playspace.playerDir = "right"
+		playspace.playerPos = position
 		
 	if Input.is_action_pressed("ui_left") and canLeft:
 		spr.set_frame(2)
 		position.x-=20*speed*delta
 		pointing = "left"
+		playspace.playerDir = "left"
+		playspace.playerPos = position
 		
 	if Input.is_action_pressed("ui_up") and canUp:
 		spr.set_frame(0)
 		position.y-=20*speed*delta
 		pointing = "up"
+		playspace.playerDir = "up"
+		playspace.playerPos = position
 		
 	if Input.is_action_pressed("ui_down") and canDown:
 		spr.set_frame(1)
 		position.y+=20*speed*delta
 		pointing = "down"
+		playspace.playerDir = "down"
+		playspace.playerPos = position
 	
 	
 

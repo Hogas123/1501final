@@ -23,7 +23,7 @@ func _ready():
 	
 	
 	#connect signals
-	connect("p_hitSignal",get_tree().get_root().get_node("main") ,"death")
+	connect("p_hitSignal",get_tree().get_root().get_node("main") ,"goToTimelines")
 	connect("s_hitSignal",get_tree().get_root().get_node("main") ,"shot_hit")
 	
 	position = Vector2( mapPos.x * dPointSize, mapPos.y * dPointSize)

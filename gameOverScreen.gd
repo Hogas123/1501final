@@ -3,20 +3,20 @@ extends CanvasLayer
 
 # Declare member variables here. Examples:
 var score
+var tLines
+var playTime
 
-signal resetSig
 
 
 #Gets the score from main after being initialized first, stops querying once it has a score
 func _ready():
-	connect("resetSig", get_tree().get_root().get_node("main"), "reset_game")
 	score = get_tree().get_root().get_node("main").score
-	$score.text = "FINAL SCORE: " + str(score)
+	tLines = get_tree().get_root().get_node("main").lines
+	$score.text = str(score) + " PIZZAS DELIVERED"
+	$tLines.text = str(tLines) + " TIMELINES VISITED"
+
+	pause_mode = PAUSE_MODE_PROCESS
 
 #closes the game
 func _on_quitBtn_pressed():
 	get_tree().quit()
-
-
-func _on_replayBtn_pressed():
-	emit_signal("resetSig")
