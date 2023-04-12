@@ -14,15 +14,17 @@ var garbage = []
 #game vars
 var score = 0
 var timer = 0
-var ammo = 30
+var ammo = 3
 var lines = 0
-var playtime = 0
+var started = false
 
 #Godot node variables
 var root
 var timeLbl
 var scoreLbl 
 var ammoLbl
+var lineLbl
+var comms
 var deliveryPoint
 var player
 var playspace
@@ -36,6 +38,7 @@ var endScreenScene
 var shotScene
 var playerScene
 var projectileScene
+var mainMenuScene
 
 
 
@@ -57,7 +60,8 @@ func _ready():
 	timeLbl = get_node("StatsPan/TimeStat")
 	scoreLbl = get_node("StatsPan/ScoreStat")
 	ammoLbl = get_node("StatsPan/AmmoCount")
-	
+	lineLbl = get_node("StatsPan/lines")
+	comms = get_node("StatsPan/ColorRect/comArea")
 	
 	#preload scene instances
 	deliveryPointScene = load("res://deliveryPoint.tscn")
@@ -68,7 +72,10 @@ func _ready():
 	shotScene = load("res://PlayerShot.tscn")
 	projectileScene = load("res://Projectile.tscn")
 	endScreenScene = load("res://gameOverScreen.tscn")
-	start_playspace()
+	mainMenuScene = load("res://MainMenu.tscn")
+	
+	var inst = mainMenuScene.instance()
+	add_child(inst)
 
 	
 	
@@ -77,14 +84,15 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	secondCount += delta
-	if(secondCount > 0.1):
+	if(secondCount > 0.1 and started):
 		secondCount = 0.0
 		timer += 0.1
 		timeLbl.text = "Time: " + str(timer)
 	scoreLbl.text = "Score: " + str(score)
 	ammoLbl.text = "Ammo: " + str(ammo)
+	lineLbl.text = "TimeLine#: " + str(lines+1)
 	
-	
+	decideComms()
 	var shooting = false
 	
 	if Input.is_action_just_pressed("playerShoot") and ammo > 0:
@@ -94,7 +102,24 @@ func _process(delta):
 	
 	if Input.is_action_just_pressed("map"):
 		print(map)
-	
+
+func decideComms():
+	var comText
+	if score < 3:
+		comText = "Welcome to Rift, for now just make deliveries and avoid the stationary obstacles. Move with WASD or ARROWS"
+	elif score < 6:
+		comText = "Shoot obstacles with SPACEBAR, complete three deliveries to get another shot"
+	elif score < 9:
+		comText = "You got the hang of it, see those enemy cannons avoid their shots as well"
+	elif score < 13:
+		comText = "Remember if you are hit you can change timelines and refill ammo at the cost of replacing destroyed obstacles"	
+	elif score < 19:
+		comText = "You are really good at this, keep bringing pizza to the people!"
+	elif score < 30:
+		comText = "Pizza Time, Pizza Time, Pizza Time Rift is #1 thanks to you"
+	else:
+		comText = "Still going? Rift Pizza is cornering the market. only 30 obstacles will appear in any new timelines"
+	comms.text = comText
 func start_playspace():
 	#fill map empty
 	for y in range(n_yPos):
@@ -117,15 +142,15 @@ func reset_playspace():
 		print(x)
 		x.queue_free()
 	
-	ammo = 7
+	ammo = 3
 	start_playspace()
 
 func randomize_playspace():
 	reset_playspace()
 	var num_obs
 	#provides maximum number of objects in a new timeline 
-	if score > 20:
-		num_obs = 20
+	if score > 31:
+		num_obs = 30
 	else:
 		num_obs = score
 	for x in num_obs:
@@ -136,7 +161,7 @@ func randomize_playspace():
 			inst.mapPos = randPointPlacer("o_e")
 			inst.multi = true
 			playspace.add_child(inst)
-		elif(type_it % 3 == 0):
+		elif(type_it % 3 == 0 and type_it > 3):
 			var inst = emitterObstacleScene.instance()
 			inst.mapPos = randPointPlacer("o_e")
 			playspace.add_child(inst)
@@ -175,6 +200,8 @@ func randPointPlacer(type):
 func score_increase():
 	score += 1
 	#clears the collected delivery point from the map
+	if score % 3 == 0:
+		ammo += 1
 	for y in range(n_yPos):
 		for x in range(n_xPos):
 			if map[y][x] == "d":
@@ -194,7 +221,7 @@ func score_increase():
 		inst.mapPos = randPointPlacer("o_e")
 		inst.multi = true
 		playspace.add_child(inst)
-	elif(score % 3 == 0):
+	elif(score % 3 == 0 and score > 3):
 		var inst = emitterObstacleScene.instance()
 		inst.mapPos = randPointPlacer("o_e")
 		playspace.add_child(inst)

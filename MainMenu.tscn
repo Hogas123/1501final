@@ -1,0 +1,79 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://LucidaTypewriterBold.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://MainMenu.gd" type="Script" id=2]
+
+[sub_resource type="DynamicFont" id=1]
+size = 64
+use_filter = true
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 24
+font_data = ExtResource( 1 )
+
+[node name="MainMenu" type="CanvasLayer"]
+script = ExtResource( 2 )
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+margin_left = 1.0
+margin_right = 1026.0
+margin_bottom = 601.0
+
+[node name="welcome" type="Label" parent="."]
+margin_left = 100.0
+margin_top = 86.0
+margin_right = 884.0
+margin_bottom = 161.0
+custom_colors/font_color = Color( 0.258824, 0.0666667, 0.0666667, 1 )
+custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 1 )
+text = "WELCOME"
+align = 1
+
+[node name="Title" type="Label" parent="."]
+margin_left = 104.0
+margin_top = 155.0
+margin_right = 888.0
+margin_bottom = 230.0
+custom_colors/font_color = Color( 0.258824, 0.0666667, 0.0666667, 1 )
+custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 1 )
+text = "TO RIFT PIZZA"
+align = 1
+
+[node name="tagline" type="Label" parent="."]
+margin_left = 256.0
+margin_top = 235.0
+margin_right = 767.0
+margin_bottom = 264.0
+custom_fonts/font = SubResource( 2 )
+text = "Coming to a Timeline near you!"
+align = 1
+
+[node name="start" type="Button" parent="."]
+margin_left = 426.0
+margin_top = 305.0
+margin_right = 582.0
+margin_bottom = 357.0
+text = "START GAME"
+
+[node name="quit" type="Button" parent="."]
+margin_left = 426.0
+margin_top = 430.0
+margin_right = 582.0
+margin_bottom = 482.0
+text = "CLOSE GAME"
+
+[node name="instructions" type="Button" parent="."]
+margin_left = 426.0
+margin_top = 367.0
+margin_right = 582.0
+margin_bottom = 419.0
+text = "INSTRUCTIONS"
+
+[connection signal="pressed" from="start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="quit" to="." method="_on_quit_pressed"]
+[connection signal="pressed" from="instructions" to="." method="_on_instructions_pressed"]

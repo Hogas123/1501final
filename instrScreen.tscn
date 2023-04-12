@@ -1,0 +1,79 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://LucidaTypewriterBold.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://instrScreen.gd" type="Script" id=2]
+
+[sub_resource type="DynamicFont" id=1]
+size = 64
+use_filter = true
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 24
+font_data = ExtResource( 1 )
+
+[node name="instrScreen" type="CanvasLayer"]
+script = ExtResource( 2 )
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+margin_left = 1.0
+margin_right = 1029.0
+margin_bottom = 598.0
+
+[node name="Title" type="Label" parent="."]
+margin_left = 107.0
+margin_top = 56.0
+margin_right = 891.0
+margin_bottom = 131.0
+custom_colors/font_color = Color( 0.258824, 0.0666667, 0.0666667, 1 )
+custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_fonts/font = SubResource( 1 )
+text = "INSTRUCTIONS"
+align = 1
+
+[node name="tagline" type="Label" parent="."]
+margin_left = 160.0
+margin_top = 148.0
+margin_right = 855.0
+margin_bottom = 209.0
+custom_fonts/font = SubResource( 2 )
+text = "Reach the current delivery point to deliver a pizza and score a point"
+autowrap = true
+
+[node name="tagline2" type="Label" parent="."]
+margin_left = 160.0
+margin_top = 225.0
+margin_right = 855.0
+margin_bottom = 286.0
+custom_fonts/font = SubResource( 2 )
+text = "Move using WASD or ARROW KEYS
+Shoot using the SPACEBAR, (7 shots per timeline)"
+autowrap = true
+
+[node name="tagline3" type="Label" parent="."]
+margin_left = 160.0
+margin_top = 301.0
+margin_right = 855.0
+margin_bottom = 394.0
+custom_fonts/font = SubResource( 2 )
+text = "If you are hit by an obstacle or projectile your timeline will be TERMINATED and you will be given the option to enter an alternate timeline."
+autowrap = true
+
+[node name="tagline4" type="Label" parent="."]
+margin_left = 165.0
+margin_top = 408.0
+margin_right = 860.0
+margin_bottom = 501.0
+custom_fonts/font = SubResource( 2 )
+text = "Alternate Timelines will have the same obstacles in different locations and ammo will be reset, destroyed obstacles respawn"
+autowrap = true
+
+[node name="back" type="Button" parent="."]
+margin_left = 745.0
+margin_top = 512.0
+margin_right = 901.0
+margin_bottom = 563.0
+text = "RETURN"
+
+[connection signal="pressed" from="back" to="." method="_on_back_pressed"]
