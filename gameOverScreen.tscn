@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://LucidaTypewriterBold.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://gameOverScreen.gd" type="Script" id=2]
 [ext_resource path="res://Dark-Techno-City_Looping.mp3" type="AudioStream" id=3]
+[ext_resource path="res://pizza-gf25c8d9a9_1280.png" type="Texture" id=4]
 
 [sub_resource type="DynamicFont" id=1]
 size = 64
@@ -16,17 +17,24 @@ font_data = ExtResource( 1 )
 [node name="gameOverScreen" type="CanvasLayer"]
 script = ExtResource( 2 )
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
-margin_left = 1.0
-margin_right = 1023.0
-margin_bottom = 601.0
+[node name="Background" type="Sprite" parent="."]
+position = Vector2( 538.5, 301.5 )
+scale = Vector2( 0.869531, 0.591406 )
+texture = ExtResource( 4 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+margin_left = 281.0
+margin_top = 190.0
+margin_right = 762.0
+margin_bottom = 311.0
+color = Color( 0.0823529, 0.0745098, 0.0745098, 1 )
 
 [node name="Label" type="Label" parent="."]
 margin_left = 108.0
 margin_top = 81.0
 margin_right = 892.0
 margin_bottom = 156.0
-custom_colors/font_color = Color( 0.258824, 0.0666667, 0.0666667, 1 )
+custom_colors/font_color = Color( 0.184314, 0.898039, 0.898039, 1 )
 custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_fonts/font = SubResource( 1 )
@@ -35,18 +43,18 @@ align = 1
 
 [node name="score" type="Label" parent="."]
 margin_left = 351.0
-margin_top = 256.0
+margin_top = 216.0
 margin_right = 690.0
-margin_bottom = 285.0
+margin_bottom = 245.0
 custom_fonts/font = SubResource( 2 )
 text = "PIZZAS DELIVERED:"
 align = 1
 
 [node name="tLines" type="Label" parent="."]
-margin_left = 344.0
-margin_top = 316.0
-margin_right = 691.0
-margin_bottom = 345.0
+margin_left = 354.0
+margin_top = 268.0
+margin_right = 701.0
+margin_bottom = 297.0
 custom_fonts/font = SubResource( 2 )
 text = "NUMBER OF TIMELINES:"
 align = 1
