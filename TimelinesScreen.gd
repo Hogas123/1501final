@@ -22,7 +22,7 @@ func _on_quitBtn_pressed():
 	$timelinesMusic.play()
 	emit_signal("endGameSig")
 
-
+#starts a new timeline
 func _on_replayBtn_pressed():
 	get_tree().paused =  false
 	emit_signal("newLineSig")

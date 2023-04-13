@@ -1,7 +1,7 @@
 extends Area2D
 
 
-# Declare member variables here. Examples:
+#Hold player info for instantiating player shots in the playspace
 var playerDir
 var playerPos
 

@@ -48,9 +48,6 @@ var newTimeSoundTimer = 0.0
 
 
 
-
-
-
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#setup
@@ -120,25 +117,7 @@ func _process(delta):
 	if timer > newTimeSoundTimer + 5.1:
 		$newTimeSound.stop()
 
-func decideComms():
-	var comText
-	if score < 3:
-		comText = "Welcome to Rift Pizza, for now just make deliveries and avoid the stationary obstacles. Move with WASD or ARROWS"
-	elif score < 5:
-		comText = "Shoot obstacles with SPACEBAR, complete three deliveries to get another shot"
-	elif score < 7:
-		comText = "The ship only has enough juice to jump to 8 timelines so be careful"
-	elif score < 9:
-		comText = "You got the hang of it, see those enemy cannons avoid their shots as well"
-	elif score < 13:
-		comText = "Remember if you are hit you can change timelines and refill ammo at the cost of replacing destroyed obstacles"	
-	elif score < 19:
-		comText = "You are really good at this, keep bringing pizza to the people!"
-	elif score < 30:
-		comText = "Pizza Time, Pizza Time, Pizza Time Rift is #1 thanks to you"
-	else:
-		comText = "Still going? Rift Pizza is cornering the market. Keep up the DOMINATION"
-	comms.text = comText
+#called each time a playspace is made (start of game, new timeline)
 func start_playspace():
 	$menuMusic.stop()
 	$newTimeSound.play()
@@ -159,7 +138,8 @@ func start_playspace():
 	var newDPos = randPointPlacer("d")
 	deliveryPoint.position.x = newDPos.x * dPointSize
 	deliveryPoint.position.y = newDPos.y * dPointSize
-	
+
+#clears all objects in the playspace
 func reset_playspace():
 	for x in playspace.get_children():
 		print(x)
@@ -168,6 +148,7 @@ func reset_playspace():
 	ammo = 3
 	start_playspace()
 
+#clears a playspace and randomizes a new playspace based on score
 func randomize_playspace():
 	reset_playspace()
 	
@@ -193,39 +174,8 @@ func randomize_playspace():
 			var inst = statObstacleScene.instance()
 			inst.mapPos = randPointPlacer("o_s")
 			playspace.add_child(inst)
-	
 
-func goToTimelines():
-	lines += 1
-	if lines > 7:
-		gameOver()
-		get_tree().paused = true
-	else:
-		var inst = timelinesScreenScene.instance()
-		add_child(inst)
-		get_tree().paused =  true
-	
-func gameOver():
-	var inst = endScreenScene.instance()
-	add_child(inst)
-
-
-#Generates a random Point placement unoccupied point on the map
-func randPointPlacer(type):
-	#adjusted range keeps things out from behind ui and on screen
-	var rand_xPos = randi() % (n_xPos-2) +1
-	var rand_yPos = randi() % (n_yPos - 5) +3
-	
-	
-	if map[rand_yPos][rand_xPos] == "e":
-		map[rand_yPos][rand_xPos] = type
-	else:
-		#function reccurs until an empty space is chosen
-		return randPointPlacer(type)
-	return Vector2(rand_xPos , rand_yPos)
-	
-		
-		
+#increases score, adds a new delivery point, adds a new obstacle
 func score_increase():
 	$deliverySound.play()
 	delSoundTimer = timer
@@ -260,12 +210,66 @@ func score_increase():
 		var inst = statObstacleScene.instance()
 		inst.mapPos = randPointPlacer("o_s")
 		playspace.add_child(inst)
+
+#runs when player is struck, opens new timeline menu
+func goToTimelines():
+	lines += 1
+	if lines > 7:
+		gameOver()
+		get_tree().paused = true
+	else:
+		var inst = timelinesScreenScene.instance()
+		add_child(inst)
+		get_tree().paused =  true
+
+#opens end screen menu
+func gameOver():
+	var inst = endScreenScene.instance()
+	add_child(inst)
+
+
+#Generates a random Point placement unoccupied point on the map
+func randPointPlacer(type):
+	#adjusted range keeps things out from behind ui and on screen
+	var rand_xPos = randi() % (n_xPos-2) +1
+	var rand_yPos = randi() % (n_yPos - 5) +3
 	
+	
+	if map[rand_yPos][rand_xPos] == "e":
+		map[rand_yPos][rand_xPos] = type
+	else:
+		#function reccurs until an empty space is chosen
+		return randPointPlacer(type)
+	return Vector2(rand_xPos , rand_yPos)
+
+#changes the boss communication tab to provide tips to player based on score
+func decideComms():
+	var comText
+	if score < 3:
+		comText = "Welcome to Rift Pizza, for now just make deliveries and avoid the stationary obstacles. Move with WASD or ARROWS"
+	elif score < 5:
+		comText = "Shoot obstacles with SPACEBAR, complete three deliveries to get another shot"
+	elif score < 7:
+		comText = "The ship only has enough juice to jump to 8 timelines so be careful"
+	elif score < 9:
+		comText = "You got the hang of it, see those enemy cannons avoid their shots as well"
+	elif score < 13:
+		comText = "Remember if you are hit you can change timelines and refill ammo at the cost of replacing destroyed obstacles"	
+	elif score < 19:
+		comText = "You are really good at this, keep bringing pizza to the people!"
+	elif score < 30:
+		comText = "Pizza Time, Pizza Time, Pizza Time Rift is #1 thanks to you"
+	else:
+		comText = "Still going? Rift Pizza is cornering the market. Keep up the DOMINATION"
+	comms.text = comText
+
+#player shot hits an obstacle
 func shot_hit(body, pos):
 	
 	map[pos.y][pos.x] = "e"
 	body.queue_free()
-	
+
+#emit signal is recieved from an emitter (sent on timer)
 func emit_proj(direction, pos):
 	var inst = projectileScene.instance()
 	
@@ -307,7 +311,8 @@ func emit_proj(direction, pos):
 		inst.position.x = pos.x
 		inst.position.y = pos.y + 35
 		playspace.add_child(inst)
-		
+
+#projectile hits player
 func proj_hit(body):
 	if body.id == "player":
 		goToTimelines()
@@ -323,4 +328,4 @@ func _on_statsPanArea_body_exited(body):
 #destroys off screen items to help performance
 func _on_playspace_body_exited(body):
 	body.queue_free()
-	pass # Replace with function body.
+	
