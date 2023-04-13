@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://LucidaTypewriterBold.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://TimelinesScreen.gd" type="Script" id=2]
+[ext_resource path="res://Dizzybot_Looping_Remixed.mp3" type="AudioStream" id=3]
 
 [sub_resource type="DynamicFont" id=1]
 size = 64
@@ -64,6 +65,9 @@ margin_top = 440.0
 margin_right = 575.0
 margin_bottom = 507.0
 text = "END GAME"
+
+[node name="timelinesMusic" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 3 )
 
 [connection signal="pressed" from="replayBtn" to="." method="_on_replayBtn_pressed"]
 [connection signal="pressed" from="quitBtn" to="." method="_on_quitBtn_pressed"]

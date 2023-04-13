@@ -80,4 +80,5 @@ func _on_ProjectileEmitter_body_entered(body):
 
 
 func _on_emitTimer_timeout():
+	$sound.play()
 	emit_signal("emit_projSignal", direction, position)

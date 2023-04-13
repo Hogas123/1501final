@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://dPoint.png" type="Texture" id=1]
+[ext_resource path="res://DPoint (2).png" type="Texture" id=1]
 [ext_resource path="res://deliveryPoint.gd" type="Script" id=2]
 
 [sub_resource type="CircleShape2D" id=1]

@@ -15,9 +15,11 @@ func _ready():
 	lines = get_tree().get_root().get_node("main").lines
 	$numResets.text = "TIMELINE #" + str(lines) + " TERMINATED."
 	pause_mode = PAUSE_MODE_PROCESS
+	$timelinesMusic.play()
 
 #closes the game
 func _on_quitBtn_pressed():
+	$timelinesMusic.play()
 	emit_signal("endGameSig")
 
 

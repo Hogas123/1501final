@@ -40,6 +40,12 @@ var playerScene
 var projectileScene
 var mainMenuScene
 
+#sound timers
+
+var shotSoundTimer = 0.0
+var delSoundTimer = 0.0
+var newTimeSoundTimer = 0.0
+
 
 
 
@@ -76,6 +82,8 @@ func _ready():
 	
 	var inst = mainMenuScene.instance()
 	add_child(inst)
+	
+	$menuMusic.play()
 
 	
 	
@@ -96,19 +104,30 @@ func _process(delta):
 	var shooting = false
 	
 	if Input.is_action_just_pressed("playerShoot") and ammo > 0:
+		$shotSound.play()
+		shotSoundTimer = timer
 		var inst = shotScene.instance()
 		playspace.add_child(inst)
 		ammo -= 1
 	
 	if Input.is_action_just_pressed("map"):
 		print(map)
+		
+	if timer > shotSoundTimer + 0.9:
+		$shotSound.stop()
+	if timer > delSoundTimer + 1.2:
+		$deliverySound.stop()
+	if timer > newTimeSoundTimer + 5.1:
+		$newTimeSound.stop()
 
 func decideComms():
 	var comText
 	if score < 3:
-		comText = "Welcome to Rift, for now just make deliveries and avoid the stationary obstacles. Move with WASD or ARROWS"
-	elif score < 6:
+		comText = "Welcome to Rift Pizza, for now just make deliveries and avoid the stationary obstacles. Move with WASD or ARROWS"
+	elif score < 5:
 		comText = "Shoot obstacles with SPACEBAR, complete three deliveries to get another shot"
+	elif score < 7:
+		comText = "The ship only has enough juice to jump to 8 timelines so be careful"
 	elif score < 9:
 		comText = "You got the hang of it, see those enemy cannons avoid their shots as well"
 	elif score < 13:
@@ -118,9 +137,13 @@ func decideComms():
 	elif score < 30:
 		comText = "Pizza Time, Pizza Time, Pizza Time Rift is #1 thanks to you"
 	else:
-		comText = "Still going? Rift Pizza is cornering the market. only 30 obstacles will appear in any new timelines"
+		comText = "Still going? Rift Pizza is cornering the market. Keep up the DOMINATION"
 	comms.text = comText
 func start_playspace():
+	$menuMusic.stop()
+	$newTimeSound.play()
+	$mainMusic.play()
+	newTimeSoundTimer = timer
 	#fill map empty
 	for y in range(n_yPos):
 		map.append([])
@@ -147,6 +170,7 @@ func reset_playspace():
 
 func randomize_playspace():
 	reset_playspace()
+	
 	var num_obs
 	#provides maximum number of objects in a new timeline 
 	if score > 31:
@@ -156,12 +180,12 @@ func randomize_playspace():
 	for x in num_obs:
 		#creates and maps new obstacle
 		var type_it = x+1
-		if(type_it % 7 == 0):
+		if(type_it % 7 == 0 ):
 			var inst = emitterObstacleScene.instance()
 			inst.mapPos = randPointPlacer("o_e")
 			inst.multi = true
 			playspace.add_child(inst)
-		elif(type_it % 3 == 0 and type_it > 3):
+		elif(type_it % 3 == 0 and type_it > 3 ):
 			var inst = emitterObstacleScene.instance()
 			inst.mapPos = randPointPlacer("o_e")
 			playspace.add_child(inst)
@@ -173,14 +197,19 @@ func randomize_playspace():
 
 func goToTimelines():
 	lines += 1
-	var inst = timelinesScreenScene.instance()
-	add_child(inst)
-	get_tree().paused =  true
+	if lines > 7:
+		gameOver()
+		get_tree().paused = true
+	else:
+		var inst = timelinesScreenScene.instance()
+		add_child(inst)
+		get_tree().paused =  true
 	
 func gameOver():
 	var inst = endScreenScene.instance()
 	add_child(inst)
-	
+
+
 #Generates a random Point placement unoccupied point on the map
 func randPointPlacer(type):
 	#adjusted range keeps things out from behind ui and on screen
@@ -198,6 +227,8 @@ func randPointPlacer(type):
 		
 		
 func score_increase():
+	$deliverySound.play()
+	delSoundTimer = timer
 	score += 1
 	#clears the collected delivery point from the map
 	if score % 3 == 0:
@@ -278,7 +309,6 @@ func emit_proj(direction, pos):
 		playspace.add_child(inst)
 		
 func proj_hit(body):
-	print("struck")
 	if body.id == "player":
 		goToTimelines()
 		
